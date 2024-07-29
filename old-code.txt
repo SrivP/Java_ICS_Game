@@ -1,0 +1,314 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+public class Player {
+    protected int x;
+    int cont = 0;
+    protected int y;
+    private static final int GRAVITY = 1;  // Gravity in pixels per frame
+    private static final int JUMP_VELOCITY = -15;  // Jump velocity in pixels per frame
+    private static final int MOVE_VELOCITY = 10;  // Move velocity in pixels per frame
+    private double vx;
+    protected ArrayList<Projectile> pprojectiles;
+    private JProgressBar healthBar;
+
+    private double vy;
+    boolean right;
+    private int health;
+    boolean left;
+    boolean stay;
+    boolean jump;
+
+    BufferedImage playerImg = null;
+
+
+    public Player(int x,int y){
+
+        this.x = x;
+        this.y = y;
+        pprojectiles = new ArrayList<>();
+        double vx = 0;
+        double vy = 0;
+        System.out.println(x + " py: " + y);
+        health = 100;
+        healthBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
+
+
+    }
+    public void addProjectile(int x, int y, int vx, int vy) {
+        pprojectiles.add(new Projectile(x, y, vx, vy));
+    }
+
+    public ArrayList<Projectile> getPprojectiles() {
+        return pprojectiles;
+    }
+
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void inflictDamage(int damage) {
+        health -= damage;
+    }
+
+    public JProgressBar getHealthBar() {
+        return healthBar;
+    }
+
+
+
+
+
+    public void velreset() {
+        cont++;
+        x += vx;
+        y += vy;
+
+
+        Timer timer = new Timer(50, null);
+        timer.start();
+        stay = true;
+        right = false;
+        left = false;
+        jump = false;
+
+
+
+
+        // Update sprite position
+        vy += GRAVITY;
+
+        // Check for collision with the ground
+        if (y + 80 > 620) {
+            y = 620 - 80;
+            vy = 0;
+        }
+
+        // Prevent sprite from going out of the frame
+        if (x < 0) {
+            x = 0;
+        } else if (x + 64 > 1280) {
+            x = 1280 - 64;
+        }
+        if (y < 0) {
+            y = 0;
+        }
+    }
+
+
+
+
+    public void up() {
+        vy = JUMP_VELOCITY;
+        stay = false;
+        jump = true;
+    }
+
+
+    public void right() {
+        vx = MOVE_VELOCITY;
+        right = true;
+        stay = false;
+    }
+    public void left() {
+        vx = -MOVE_VELOCITY;
+        left = true;
+        stay = false;
+
+
+    }
+
+
+
+    public void myDraw(Graphics g){
+        boolean k = false;
+        if(stay) {
+            k = true;
+            playerImg = MyImages.getBasicImg();
+        }else if (left) {
+            k =true;
+            playerImg = MyImages.getNextLeft();
+        } else if (jump) {
+            k =true;
+            playerImg = MyImages.getNextJump();
+        } else if(right) {
+            playerImg = MyImages.getNextRight();
+        }
+        g.drawImage(playerImg,x,y,null);
+
+
+
+
+    }
+
+    public boolean collidesWith(Player other) {
+        if (x + 55 > other.getX() && x < other.getX() + other.getWidth() &&
+                y + 83 > other.getY() && y < other.getY() + other.getHeight()) {
+            return true;
+        }
+        return false;
+    }
+
+    public double getVx() {
+        return vx;
+    }
+
+    public void setVx(double vx) {
+        this.vx = vx;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int nx){
+        x = nx;
+    }
+    public int getY() {
+        return y;
+    }
+
+    public int getWidth() {
+        return 55;
+    }
+
+    public int getHeight() {
+        return 83;
+    }
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+
+public class Boss2 extends Player {
+    private static final int GRAVITY = 15;  // Gravity in pixels per frame
+    private static final int JUMP_VELOCITY = -30;  // Jump velocity in pixels per frame
+    private static final int MOVE_VELOCITY = 100;  // Move velocity in pixels per frame
+    private int vx;
+    private int vy;
+    protected ArrayList<Projectile> projectiles;
+    ImageIcon b2Img = null;
+
+    public Boss2(int x,int y){
+        super(x,y);
+        projectiles = new ArrayList<>();
+        double vx = 0;
+        double vy = 0;
+        System.out.println(x + " by:" + y);
+
+
+    }
+
+
+
+    public ArrayList<Projectile> getProjectiles() {
+        return projectiles;
+    }
+
+    public void fireProjectile() {
+        Projectile projectile = new Projectile(x, y,vx,vy);
+        projectiles.add(projectile);
+    }
+
+    public void follow(Player player) {
+
+        // Calculate the distance between the enemy and player in the x and y directions
+        int dx = player.getX() - getX();
+        int dy = player.getY() - getY();
+
+        // Set the velocity in the x and y directions to move the enemy towards the player
+        vx = dx / 10;
+        vy = dy / 10;
+    }
+    public void move () {
+        for (int i = 0; i <= cont; i++) {
+            Timer k = new Timer(100, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    x += vx;
+                    y += vy;
+                }
+            });
+            k.setRepeats(false);
+            k.start();
+
+
+        }
+    }
+
+
+
+
+
+    public void myDraw(Graphics g){
+        b2Img = MyImages.getbStay();
+        g.drawImage(b2Img.getImage(),getX(),getY(),null);
+    }
+
+
+
+
+}
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+public class MyImages{
+    private static BufferedImage spriteImg, basicImg;
+    private static BufferedImage pright;
+    private static BufferedImage pleft;
+    private static BufferedImage pjump;
+
+
+    static ImageIcon b2 = new ImageIcon("Boss1.gif");
+    static ImageIcon run = new ImageIcon("__Run.gif");
+
+    private static int cnt=0;
+
+    public static void loadImages(){
+        try {
+            spriteImg = ImageIO.read(new File("McF.gif"));
+        }
+        catch(Exception e) {
+            System.out.print("Error" + e);
+        }
+        basicImg = spriteImg.getSubimage(2,113,55,83);
+
+        pright = spriteImg.getSubimage(1,26,55,83);
+        pleft = spriteImg.getSubimage(181,31,55,83);
+        pjump = spriteImg.getSubimage(89,29,55,83);
+
+
+    }
+
+    public static BufferedImage getNextRight(){
+        return pright;
+    }
+    public static BufferedImage getNextJump(){
+        return pjump;
+    }
+
+    public static BufferedImage getNextLeft(){
+        return pleft;
+    }
+    public static BufferedImage getBasicImg(){
+        return basicImg;
+    }
+
+
+    public static ImageIcon getbStay() {
+        return b2;
+    }
+}
