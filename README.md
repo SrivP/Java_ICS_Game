@@ -6,7 +6,7 @@
 Hello Ms. S! Hope your day is going well!
 
 
-Thank you for taking the time to play this little game by Surya and Srivathsan. This game isn't meant to be overly complicated, but is meant to be simple to enjoy by everyone. Our game revolves around the protagonist, you!, and the random villians you massacre on your journey through the cosmos, travelling from jungles, to even outerspace. 
+Thank you for taking the time to play this little game by (partner name hidden) and Srivathsan. This game isn't meant to be overly complicated, but is meant to be simple to enjoy by everyone. Our game revolves around the protagonist, you!, and the random villians you massacre on your journey through the cosmos, travelling from jungles, to even outerspace. 
 
 
 How to use it:
